@@ -2,19 +2,39 @@
 
 const PORT = 3000;
 const express = require('express');
-const url = require('url');
-const fs = require('fs');
+const path = require('path');
+// const url = require('url');
+// const fs = require('fs');
 
 const app = express();
 
+
+app.set('view engine','ejs');
+
+app.set('views', path.join(__dirname,'views'));
+
+// var myInfo = [{
+//     name : "Geetesh",
+//     class : "CSE",
+//     email : "geetesh@gmail.com"
+// }, {
+//     name : "Geetesh",
+//     class : "CSE",
+//     email : "geetesh@gmail.com"
+// }
+
+
+// ]
+
 app.get('/',function(req,res){
-   return res.send('<h1>Hey Express</h1>');
+   return res.render('index',{myInfo : myInfo});
 
 })
 
 app.get('/profile',function(req,res){
-    return res.send("<h3>My Profile</h3>")
-})
+    return res.render('profile' , {myInfo : myInfo });
+ 
+ })
 
 app.listen(PORT,function(err){
     if(err){
@@ -41,7 +61,11 @@ app.listen(PORT,function(err){
 
 
 
-
+// app.get('/profile',function(req,res){
+//     console.log("path",__dirname);
+//     return res.sendFile(__dirname+'/profile.html');
+  
+// })
 
 
 
@@ -75,4 +99,5 @@ app.listen(PORT,function(err){
 
 // })
 
-
+// console.log(__dirname)
+//         return res.sendFile(__dirname+'/profile.html');
