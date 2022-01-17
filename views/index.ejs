@@ -7,6 +7,25 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Entry Point Ejs</h2>
+    
+    <h1>Movies</h1>
+
+    <% for(i of Movies) { %>
+        <h3> MovieName : <%= i.name %> </h3>
+        <h3> MovieYear : <%= i.year %> </h3>
+        <button> 
+            <a href="/movieDelete/<%= i.name %>">
+            X
+        </a>
+        </button>
+   <% } %>
+    
+        <form action="/addMovies" method="POST">
+            <input type="text" name="movieName" placeholder="Enter Movie Name" required>
+            <input type="number" name="movieYear" placeholder="Enter Movie Year" required>
+            <button> Add </button>
+        </form>
+    
+
 </body>
 </html>

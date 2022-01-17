@@ -13,28 +13,57 @@ app.set('view engine','ejs');
 
 app.set('views', path.join(__dirname,'views'));
 
-// var myInfo = [{
-//     name : "Geetesh",
-//     class : "CSE",
-//     email : "geetesh@gmail.com"
-// }, {
-//     name : "Geetesh",
-//     class : "CSE",
-//     email : "geetesh@gmail.com"
-// }
+app.use(express.urlencoded({ extended : true})); //middleware
 
+var Movies = [
+    {
+        name : 'IronMan-1',
+        year : '2009'
+    },
+    {
+        name : 'MS Dhoni',
+        year : '2016'
+    },
+    {
+        name : 'Avengers',
+        year : '2014'
+    }
 
-// ]
+]
+
 
 app.get('/',function(req,res){
-   return res.render('index',{myInfo : myInfo});
+    return res.render('index',{Movies : Movies});
 
 })
 
-app.get('/profile',function(req,res){
-    return res.render('profile' , {myInfo : myInfo });
- 
- })
+
+app.post('/addMovies',function(req,res){
+    console.log(req.body);
+    let obj = {
+        name : req.body.movieName,
+        year : req.body.movieYear
+    }
+    Movies.push(obj);
+
+   return res.redirect('back');
+})
+
+
+[0,1,2,3,4]
+
+app.get('/movieDelete/:name',function(req,res){
+   
+    let movieIndex = Movies.findIndex(value => value.name == req.params.name);
+    console.log("Index",movieIndex)
+    if(movieIndex != -1){
+        Movies.splice(movieIndex,1);
+    }
+   return res.redirect('back')
+})
+
+
+
 
 app.listen(PORT,function(err){
     if(err){
@@ -53,6 +82,61 @@ app.listen(PORT,function(err){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 1===3 ? console.log("acb") : 1==2 ? console.log("right") : console.log("xyz");
+
+// if(1===3){
+//     console.log("acb")
+// }
+// else if(1==1){
+//     console.log("right")
+// }
+// else{
+//     console.log("xyz")
+// }
+
+
+//middleware
+
+// app.use(function(req,res,next){
+//     console.log("Calling 1")
+//     next();
+// })
+
+// app.use(function(req,res,next){
+//     console.log("Calling 2")
+//     next();
+// })
+
+
+
+
+
+
+
+
+// Blocking vs Non-Blocking
+
+
+// callStack
 
 
 
@@ -101,3 +185,64 @@ app.listen(PORT,function(err){
 
 // console.log(__dirname)
 //         return res.sendFile(__dirname+'/profile.html');
+
+
+// app.use(express.urlencoded({ extended: true }))
+
+// var Movies =[ {
+//     name : "IronMan-1",
+//     year : "2009",
+// },
+// {
+//     name : "Rush",
+//     year : "2016"
+// },
+// {
+//     name : "Avengers",
+//     year : "2014"
+// }
+// ]
+
+
+// app.get('/',function(req,res){
+//     return res.render('index' , {Movies : Movies });
+
+// })
+
+// app.get('/profile',function(req,res){
+//     return res.send('No Use');
+ 
+//  })
+
+//  app.post('/addMovie',function(req,res){
+//      let obj = {
+//         name : req.body.MovieName,
+//         year : req.body.MovieYear,
+//      }
+     
+//      console.log(req.body);
+//      Movies.push(obj)
+//      res.redirect('/')
+//  })
+
+// app.listen(PORT,function(err){
+//     if(err){
+//         console.log(err);
+//         return;
+//     }
+//     console.log("Server is running on Port",PORT)
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
