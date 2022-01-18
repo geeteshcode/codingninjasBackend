@@ -6,6 +6,8 @@ const path = require('path');
 // const url = require('url');
 // const fs = require('fs');
 
+const database = require('./config/mongoose');
+
 const app = express();
 
 
@@ -52,10 +54,10 @@ app.post('/addMovies',function(req,res){
 
 [0,1,2,3,4]
 
-app.get('/movieDelete/:name',function(req,res){
+app.get('/movieDelete/',function(req,res){
    
-    let movieIndex = Movies.findIndex(value => value.name == req.params.name);
-    console.log("Index",movieIndex)
+    let movieIndex = Movies.findIndex(value => value.name == req.query.name);
+    console.log("Index",req.query.name)
     if(movieIndex != -1){
         Movies.splice(movieIndex,1);
     }

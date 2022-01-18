@@ -9,17 +9,22 @@
 <body>
     
     <h1>Movies</h1>
+    <% if(Movies.length==0) { %>
+    
+        <p>Empty</p>
+  
 
+    <% } else { %>
     <% for(i of Movies) { %>
         <h3> MovieName : <%= i.name %> </h3>
         <h3> MovieYear : <%= i.year %> </h3>
         <button> 
-            <a href="/movieDelete/<%= i.name %>">
+            <a href="/movieDelete/?name=<%= i.name %>">
             X
         </a>
         </button>
    <% } %>
-    
+   <% } %>
         <form action="/addMovies" method="POST">
             <input type="text" name="movieName" placeholder="Enter Movie Name" required>
             <input type="number" name="movieYear" placeholder="Enter Movie Year" required>
