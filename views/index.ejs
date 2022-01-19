@@ -16,11 +16,16 @@
 
     <% } else { %>
     <% for(i of Movies) { %>
-        <h3> MovieName : <%= i.name %> </h3>
-        <h3> MovieYear : <%= i.year %> </h3>
+        <h3 contenteditable > MovieName : <%= i.name %> </h3>
+        <h3 contenteditable > MovieYear : <%= i.year %> </h3>
         <button> 
-            <a href="/movieDelete/?name=<%= i.name %>">
+            <a href="/movieDelete/?id=<%= i._id %>">
             X
+        </a>
+        </button>
+        <button> 
+            <a href="/movieUpdate/?id=<%= i._id %>">
+            Update
         </a>
         </button>
    <% } %>

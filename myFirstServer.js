@@ -7,7 +7,7 @@ const path = require('path');
 // const fs = require('fs');
 
 const database = require('./config/mongoose');
-
+const Movie = require('./models/movie');
 const app = express();
 
 
@@ -17,54 +17,70 @@ app.set('views', path.join(__dirname,'views'));
 
 app.use(express.urlencoded({ extended : true})); //middleware
 
-var Movies = [
-    {
-        name : 'IronMan-1',
-        year : '2009'
-    },
-    {
-        name : 'MS Dhoni',
-        year : '2016'
-    },
-    {
-        name : 'Avengers',
-        year : '2014'
-    }
 
-]
 
 
 app.get('/',function(req,res){
-    return res.render('index',{Movies : Movies});
+
+    Movie.find({}, function(err,movies){
+        if(err){
+            console.log("Error movies")
+            return;
+        }
+        return res.render('index',{Movies : movies})
+    })
+    
 
 })
 
 
 app.post('/addMovies',function(req,res){
-    console.log(req.body);
-    let obj = {
+    // console.log(req.body);
+    // let obj = {
+    //     name : req.body.movieName,
+    //     year : req.body.movieYear
+    // }
+    // Movies.push(obj);
+
+    Movie.create({
         name : req.body.movieName,
         year : req.body.movieYear
-    }
-    Movies.push(obj);
-
-   return res.redirect('back');
-})
-
-
-[0,1,2,3,4]
-
-app.get('/movieDelete/',function(req,res){
+    },function(err,newMovie){
+        if(err){
+            console.log("Error in adding movies")
+            return;
+        }
+        console.log("new movie",newMovie);
+        return res.redirect('back');
+    })
    
-    let movieIndex = Movies.findIndex(value => value.name == req.query.name);
-    console.log("Index",req.query.name)
-    if(movieIndex != -1){
-        Movies.splice(movieIndex,1);
-    }
-   return res.redirect('back')
 })
 
 
+
+app.get('/movieDelete',function(req,res){
+   
+    // let movieIndex = Movies.findIndex(value => value.name == req.query.name);
+    // console.log("Index",req.query.name)
+    // if(movieIndex != -1){
+    //     Movies.splice(movieIndex,1);
+    // }
+
+    Movie.findByIdAndDelete(req.query.id,function(err){
+        if(err){
+            console.log("error is deleting");
+            return;
+        }
+        return res.redirect('back');
+    })
+    
+
+    
+})
+
+app.get('/movieUpdate',function(req,res){
+
+})
 
 
 app.listen(PORT,function(err){
