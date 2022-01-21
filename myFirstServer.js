@@ -1,6 +1,6 @@
 
 
-const PORT = 3000;
+const PORT = 4000;
 const express = require('express');
 const path = require('path');
 // const url = require('url');
@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended : true})); //middleware
 
 
 
+//show
 
 app.get('/',function(req,res){
 
@@ -33,6 +34,7 @@ app.get('/',function(req,res){
 
 })
 
+//add
 
 app.post('/addMovies',function(req,res){
     // console.log(req.body);
@@ -57,6 +59,7 @@ app.post('/addMovies',function(req,res){
 })
 
 
+//delete
 
 app.get('/movieDelete',function(req,res){
    
@@ -78,9 +81,21 @@ app.get('/movieDelete',function(req,res){
     
 })
 
-app.get('/movieUpdate',function(req,res){
+//update
 
+app.post('/updateMovie',function(req,res){
+    console.log(req.body);
+    Movie.findByIdAndUpdate(req.query.id,req.body,function(err,updateMovie){
+        if(err){
+            console.log("Error in Updating Movie");
+            return;
+        }
+        console.log(updateMovie);
+        return res.redirect('back');
+    })
 })
+
+
 
 
 app.listen(PORT,function(err){
@@ -90,6 +105,9 @@ app.listen(PORT,function(err){
     }
     console.log("Server is running on Port",PORT)
 })
+
+
+
 
 
 

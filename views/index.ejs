@@ -16,18 +16,18 @@
 
     <% } else { %>
     <% for(i of Movies) { %>
-        <h3 contenteditable > MovieName : <%= i.name %> </h3>
-        <h3 contenteditable > MovieYear : <%= i.year %> </h3>
+        <h3 > MovieName : <%= i.name %> </h3>
+        <h3 > MovieYear : <%= i.year %> </h3>
         <button> 
             <a href="/movieDelete/?id=<%= i._id %>">
             X
         </a>
         </button>
-        <button> 
-            <a href="/movieUpdate/?id=<%= i._id %>">
-            Update
-        </a>
-        </button>
+        <form action="/updateMovie/?id=<%= i._id %>" method="POST">
+            <input type="text" name="name" placeholder="Enter Movie Name" required>
+            <input type="number" name="year" placeholder="Enter Movie Year" required>
+            <button> Update </button>
+        </form>
    <% } %>
    <% } %>
         <form action="/addMovies" method="POST">
