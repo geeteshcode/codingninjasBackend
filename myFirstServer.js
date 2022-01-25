@@ -6,105 +6,121 @@ const path = require('path');
 // const url = require('url');
 // const fs = require('fs');
 
-const database = require('./config/mongoose');
-const Movie = require('./models/movie');
+// const database = require('./config/mongoose');
+// const Movie = require('./models/movie');
 const app = express();
 
 
 app.set('view engine','ejs');
-
+app.use(express.static('./assets'));
 app.set('views', path.join(__dirname,'views'));
 
 app.use(express.urlencoded({ extended : true})); //middleware
 
 
+const server = require('http').createServer(app);
 
-//show
+const io = require('socket.io')(server,{cors:{origin:'*'}})
 
 app.get('/',function(req,res){
-
-    Movie.find({}, function(err,movies){
-        if(err){
-            console.log("Error movies")
-            return;
-        }
-        return res.render('index',{Movies : movies})
-    })
-    
-
-})
-
-//add
-
-app.post('/addMovies',function(req,res){
-    // console.log(req.body);
-    // let obj = {
-    //     name : req.body.movieName,
-    //     year : req.body.movieYear
-    // }
-    // Movies.push(obj);
-
-    Movie.create({
-        name : req.body.movieName,
-        year : req.body.movieYear
-    },function(err,newMovie){
-        if(err){
-            console.log("Error in adding movies")
-            return;
-        }
-        console.log("new movie",newMovie);
-        return res.redirect('back');
-    })
-   
-})
-
-
-//delete
-
-app.get('/movieDelete',function(req,res){
-   
-    // let movieIndex = Movies.findIndex(value => value.name == req.query.name);
-    // console.log("Index",req.query.name)
-    // if(movieIndex != -1){
-    //     Movies.splice(movieIndex,1);
-    // }
-
-    Movie.findByIdAndDelete(req.query.id,function(err){
-        if(err){
-            console.log("error is deleting");
-            return;
-        }
-        return res.redirect('back');
-    })
-    
-
-    
-})
-
-//update
-
-app.post('/updateMovie',function(req,res){
-    console.log(req.body);
-    Movie.findByIdAndUpdate(req.query.id,req.body,function(err,updateMovie){
-        if(err){
-            console.log("Error in Updating Movie");
-            return;
-        }
-        console.log(updateMovie);
-        return res.redirect('back');
-    })
+    return res.render('chat_box');
 })
 
 
 
-
-app.listen(PORT,function(err){
+server.listen(PORT,function(err){
     if(err){
         console.log(err);
         return;
     }
     console.log("Server is running on Port",PORT)
 })
+
+io.on('connection',(socket)=>{
+    console.log('Token',socket.id);
+    socket.on('message',(data)=>{
+        socket.broadcast.emit('message',data);
+    })
+})
+
+
+//show
+
+// app.get('/',function(req,res){
+
+//     Movie.find({}, function(err,movies){
+//         if(err){
+//             console.log("Error movies")
+//             return;
+//         }
+//         return res.render('index',{Movies : movies})
+//     })
+    
+
+// })
+
+// //add
+
+// app.post('/addMovies',function(req,res){
+//     // console.log(req.body);
+//     // let obj = {
+//     //     name : req.body.movieName,
+//     //     year : req.body.movieYear
+//     // }
+//     // Movies.push(obj);
+
+//     Movie.create({
+//         name : req.body.movieName,
+//         year : req.body.movieYear
+//     },function(err,newMovie){
+//         if(err){
+//             console.log("Error in adding movies")
+//             return;
+//         }
+//         console.log("new movie",newMovie);
+//         return res.redirect('back');
+//     })
+   
+// })
+
+
+// //delete
+
+// app.get('/movieDelete',function(req,res){
+   
+//     // let movieIndex = Movies.findIndex(value => value.name == req.query.name);
+//     // console.log("Index",req.query.name)
+//     // if(movieIndex != -1){
+//     //     Movies.splice(movieIndex,1);
+//     // }
+
+//     Movie.findByIdAndDelete(req.query.id,function(err){
+//         if(err){
+//             console.log("error is deleting");
+//             return;
+//         }
+//         return res.redirect('back');
+//     })
+    
+
+    
+// })
+
+// //update
+
+// app.post('/updateMovie',function(req,res){
+//     console.log(req.body);
+//     Movie.findByIdAndUpdate(req.query.id,req.body,function(err,updateMovie){
+//         if(err){
+//             console.log("Error in Updating Movie");
+//             return;
+//         }
+//         console.log(updateMovie);
+//         return res.redirect('back');
+//     })
+// })
+
+
 
 
 
