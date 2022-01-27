@@ -2,12 +2,14 @@
 
 const PORT = 4000;
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const path = require('path');
 // const url = require('url');
 // const fs = require('fs');
 
-// const database = require('./config/mongoose');
+const database = require('./config/mongoose');
 // const Movie = require('./models/movie');
+const User = require('./models/user');
 const app = express();
 
 
@@ -16,19 +18,79 @@ app.use(express.static('./assets'));
 app.set('views', path.join(__dirname,'views'));
 
 app.use(express.urlencoded({ extended : true})); //middleware
+app.use(cookieParser()); //middleware
 
 
-const server = require('http').createServer(app);
 
-const io = require('socket.io')(server,{cors:{origin:'*'}})
 
-app.get('/',function(req,res){
-    return res.render('chat_box');
+// const server = require('http').createServer(app);
+
+// const io = require('socket.io')(server,{cors:{origin:'*'}})
+
+app.get('/signin',function(req,res){
+    return res.render('signIn');
+})
+
+app.get('/signup',function(req,res){
+    
+    return res.render('signUp');
+})
+
+app.post('/userCreate',function(req,res){
+    if(req.body.password != req.body.confirm_password){
+        console.log("passsword not matched");
+        return res.redirect('back');
+    }
+
+    User.findOne({email : req.body.email},function(err,user){
+        if(err){
+            console.log("error found");
+            return;
+        }
+        if(!user){
+            User.create(req.body,function(err,user){
+                console.log(req.body);
+                if(err){
+                    console.log("error found");
+                    return;
+                }
+                return res.redirect('/signin')
+            })
+        }
+        else{
+            return res.redirect('back');
+        }
+    })
+    
+})
+
+
+app.post('/userLogin',function(req,res){
+    User.findOne({email : req.body.email},function(err,user){
+        if(err){
+            console.log("error found");
+            return;
+        }
+        if(user){
+            if(user.password != req.body.password){
+                return res.redirect('back');
+            }
+
+            res.cookie('name',user.name);
+            res.redirect('/profile');
+
+        }
+        else{
+            console.log("email not found")
+            return res.redirect('back');
+        }
+    })
 })
 
 
 
-server.listen(PORT,function(err){
+
+app.listen(PORT,function(err){
     if(err){
         console.log(err);
         return;
@@ -36,12 +98,12 @@ server.listen(PORT,function(err){
     console.log("Server is running on Port",PORT)
 })
 
-io.on('connection',(socket)=>{
-    console.log('Token',socket.id);
-    socket.on('message',(data)=>{
-        socket.broadcast.emit('message',data);
-    })
-})
+// io.on('connection',(socket)=>{
+//     console.log('Token',socket.id);
+//     socket.on('message',(data)=>{
+//         socket.broadcast.emit('message',data);
+//     })
+// })
 
 
 //show
