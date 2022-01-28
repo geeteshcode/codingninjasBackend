@@ -36,6 +36,11 @@ app.get('/signup',function(req,res){
     return res.render('signUp');
 })
 
+app.get('/profile',function(req,res){
+    console.log(req.cookies.name);
+    return res.render('profile',{name : req.cookies.name});
+})
+
 app.post('/userCreate',function(req,res){
     if(req.body.password != req.body.confirm_password){
         console.log("passsword not matched");
@@ -58,7 +63,7 @@ app.post('/userCreate',function(req,res){
             })
         }
         else{
-            return res.redirect('back');
+            return res.redirect('/signin');
         }
     })
     
@@ -82,7 +87,7 @@ app.post('/userLogin',function(req,res){
         }
         else{
             console.log("email not found")
-            return res.redirect('back');
+            return res.redirect('/signup');
         }
     })
 })
