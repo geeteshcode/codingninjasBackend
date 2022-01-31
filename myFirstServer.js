@@ -6,8 +6,11 @@ const cookieParser = require('cookie-parser')
 const path = require('path');
 // const url = require('url');
 // const fs = require('fs');
-
+const passport = require('passport');
+const passportLocal = require('./config/passport-local');
+const session = require('express-session');
 const database = require('./config/mongoose');
+
 // const Movie = require('./models/movie');
 const User = require('./models/user');
 const app = express();
@@ -20,8 +23,18 @@ app.set('views', path.join(__dirname,'views'));
 app.use(express.urlencoded({ extended : true})); //middleware
 app.use(cookieParser()); //middleware
 
+app.use(session({
+    name : 'login',
+    secret : 'xyz',
+    saveUninitialized : false,
+    resave : false,
+    cookie : {
+        maxAge : (1000 * 60 * 100)
+    }
+}))
 
-
+app.use(passport.initialize());
+app.use(passport.session());
 
 // const server = require('http').createServer(app);
 
@@ -37,8 +50,7 @@ app.get('/signup',function(req,res){
 })
 
 app.get('/profile',function(req,res){
-    console.log(req.cookies.name);
-    return res.render('profile',{name : req.cookies.name});
+    return res.render('profile');
 })
 
 app.post('/userCreate',function(req,res){
@@ -70,27 +82,36 @@ app.post('/userCreate',function(req,res){
 })
 
 
-app.post('/userLogin',function(req,res){
-    User.findOne({email : req.body.email},function(err,user){
-        if(err){
-            console.log("error found");
-            return;
-        }
-        if(user){
-            if(user.password != req.body.password){
-                return res.redirect('back');
-            }
+app.post('/userLogin',
+passport.authenticate(
+    'local',
+    {failureRedirect : '/signup'}
+),function(req,res){
+    return res.redirect('/profile')
+}
+)
 
-            res.cookie('name',user.name);
-            res.redirect('/profile');
+// app.post('/userLogin',function(req,res){
+//     User.findOne({email : req.body.email},function(err,user){
+//         if(err){
+//             console.log("error found");
+//             return;
+//         }
+//         if(user){
+//             if(user.password != req.body.password){
+//                 return res.redirect('back');
+//             }
 
-        }
-        else{
-            console.log("email not found")
-            return res.redirect('/signup');
-        }
-    })
-})
+//             res.cookie('name',user.name);
+//             res.redirect('/profile');
+
+//         }
+//         else{
+//             console.log("email not found")
+//             return res.redirect('/signup');
+//         }
+//     })
+// })
 
 
 
