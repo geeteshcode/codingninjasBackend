@@ -10,9 +10,10 @@ const passport = require('passport');
 const passportLocal = require('./config/passport-local');
 const session = require('express-session');
 const database = require('./config/mongoose');
-
+const MongoStore = require('connect-mongo');
 // const Movie = require('./models/movie');
 const User = require('./models/user');
+
 const app = express();
 
 
@@ -29,13 +30,19 @@ app.use(session({
     saveUninitialized : false,
     resave : false,
     cookie : {
-        maxAge : (1000 * 60 * 100)
+        maxAge : (100 * 60 * 1000)
+    },
+    store : MongoStore.create({
+        mongoUrl : 'mongodb://localhost:27017/movieDB',
+        mongooseConnect : database,
+        autoRemove : 'disable'
     }
+    )
 }))
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(passport.setAuthenticatedUser);
 // const server = require('http').createServer(app);
 
 // const io = require('socket.io')(server,{cors:{origin:'*'}})
@@ -45,11 +52,13 @@ app.get('/signin',function(req,res){
 })
 
 app.get('/signup',function(req,res){
-    
+    if(req.isAuthenticated()){
+      return res.redirect('/profile')
+    }
     return res.render('signUp');
 })
 
-app.get('/profile',function(req,res){
+app.get('/profile',passport.checkAuthentication,function(req,res){
     return res.render('profile');
 })
 
