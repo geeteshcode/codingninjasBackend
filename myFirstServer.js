@@ -13,7 +13,6 @@ const database = require('./config/mongoose');
 const MongoStore = require('connect-mongo');
 // const Movie = require('./models/movie');
 const User = require('./models/user');
-
 const app = express();
 
 
@@ -60,6 +59,11 @@ app.get('/signup',function(req,res){
 
 app.get('/profile',passport.checkAuthentication,function(req,res){
     return res.render('profile');
+})
+
+app.get('/signout',function(req,res){
+    req.logOut();
+    return res.redirect('/signin');
 })
 
 app.post('/userCreate',function(req,res){
