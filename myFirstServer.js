@@ -10,12 +10,14 @@ const passport = require('passport');
 const passportLocal = require('./config/passport-local');
 const session = require('express-session');
 const database = require('./config/mongoose');
+const googleStrategy = require('./config/passport-google-oauth');
 const MongoStore = require('connect-mongo');
 // const Movie = require('./models/movie');
 const User = require('./models/user');
 const app = express();
 
 
+// created the app set params
 app.set('view engine','ejs');
 app.use(express.static('./assets'));
 app.set('views', path.join(__dirname,'views'));
@@ -23,6 +25,8 @@ app.set('views', path.join(__dirname,'views'));
 app.use(express.urlencoded({ extended : true})); //middleware
 app.use(cookieParser()); //middleware
 
+
+// created the session for google Auth
 app.use(session({
     name : 'login',
     secret : 'xyz',
@@ -65,6 +69,13 @@ app.get('/signout',function(req,res){
     req.logOut();
     return res.redirect('/signin');
 })
+
+app.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
+app.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signin'}),
+    function(req,res){
+        return res.redirect('/profile');
+    }
+)
 
 app.post('/userCreate',function(req,res){
     if(req.body.password != req.body.confirm_password){
