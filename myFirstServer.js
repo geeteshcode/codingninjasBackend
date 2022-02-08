@@ -46,11 +46,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.setAuthenticatedUser);
-// const server = require('http').createServer(app);
-
+// const server = require('http').createServer(app)
 // const io = require('socket.io')(server,{cors:{origin:'*'}})
 
 app.get('/signin',function(req,res){
+  
     return res.render('signIn');
 })
 
